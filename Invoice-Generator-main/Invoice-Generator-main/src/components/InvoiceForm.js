@@ -28,9 +28,9 @@ class InvoiceForm extends React.Component {
       total: '0.00',
       subTotal: '0.00',
       taxRate: '',
-      taxAmmount: '0.00',
+      taxAmount: '0.00',
       discountRate: '',
-      discountAmmount: '0.00'
+      discountAmount: '0.00'
     };
     this.state.items = [
       {
@@ -67,21 +67,21 @@ class InvoiceForm extends React.Component {
     var items = this.state.items;
     var subTotal = 0;
 
-    items.map(function(items) {
-      subTotal = parseFloat(subTotal + (parseFloat(items.price).toFixed(2) * parseInt(items.quantity))).toFixed(2)
+    items.forEach(function(item) {
+      subTotal += parseFloat(item.price) * parseInt(item.quantity);
     });
 
     this.setState({
-      subTotal: parseFloat(subTotal).toFixed(2)
+      subTotal: subTotal.toFixed(2)
     }, () => {
       this.setState({
-        taxAmmount: parseFloat(parseFloat(subTotal) * (this.state.taxRate / 100)).toFixed(2)
+        taxAmount: (subTotal * (this.state.taxRate / 100)).toFixed(2)
       }, () => {
         this.setState({
-          discountAmmount: parseFloat(parseFloat(subTotal) * (this.state.discountRate / 100)).toFixed(2)
+          discountAmount: (subTotal * (this.state.discountRate / 100)).toFixed(2)
         }, () => {
           this.setState({
-            total: ((subTotal - this.state.discountAmmount) + parseFloat(this.state.taxAmmount))
+            total: (subTotal - this.state.discountAmount + parseFloat(this.state.taxAmount)).toFixed(2)
           });
         });
       });
@@ -97,7 +97,7 @@ class InvoiceForm extends React.Component {
     var items = this.state.items.slice();
     var newItems = items.map(function(items) {
       for (var key in items) {
-        if (key == item.name && items.id == item.id) {
+        if (key === item.name && items.id === item.id) {
           items[key] = item.value;
         }
       }
@@ -177,7 +177,7 @@ class InvoiceForm extends React.Component {
                   <span>
                     <span className="small ">({this.state.discountRate || 0}%)</span>
                     {this.state.currency}
-                    {this.state.discountAmmount || 0}</span>
+                    {this.state.discountAmount || 0}</span>
                 </div>
                 <div className="d-flex flex-row align-items-start justify-content-between mt-2">
                   <span className="fw-bold">Tax:
@@ -185,7 +185,7 @@ class InvoiceForm extends React.Component {
                   <span>
                     <span className="small ">({this.state.taxRate || 0}%)</span>
                     {this.state.currency}
-                    {this.state.taxAmmount || 0}</span>
+                    {this.state.taxAmount || 0}</span>
                 </div>
                 <hr/>
                 <div className="d-flex flex-row align-items-start justify-content-between" style={{
@@ -206,7 +206,7 @@ class InvoiceForm extends React.Component {
         <Col md={4} lg={3}>
           <div className="sticky-top pt-md-3 pt-xl-4">
             <Button variant="primary" type="submit" className="d-block w-100">Review Invoice</Button>
-            <InvoiceModal showModal={this.state.isOpen} closeModal={this.closeModal} info={this.state} items={this.state.items} currency={this.state.currency} subTotal={this.state.subTotal} taxAmmount={this.state.taxAmmount} discountAmmount={this.state.discountAmmount} total={this.state.total}/>
+            <InvoiceModal showModal={this.state.isOpen} closeModal={this.closeModal} info={this.state} items={this.state.items} currency={this.state.currency} subTotal={this.state.subTotal} taxAmount={this.state.taxAmount} discountAmount={this.state.discountAmount} total={this.state.total}/>
             <Form.Group className="mb-3">
               <Form.Label className="fw-bold">Currency:</Form.Label>
               <Form.Select onChange={event => this.onCurrencyChange({currency: event.target.value})} className="btn btn-light my-1" aria-label="Change Currency">
@@ -215,7 +215,7 @@ class InvoiceForm extends React.Component {
                 <option value="¥">JPY (Japanese Yen)</option>
                 <option value="$">CAD (Canadian Dollar)</option>
                 <option value="$">AUD (Australian Dollar)</option>
-                <option value="$">SGD (Signapore Dollar)</option>
+                <option value="$">SGD (Singapore Dollar)</option>
                 <option value="¥">CNY (Chinese Renminbi)</option>
                 <option value="₿">BTC (Bitcoin)</option>
               </Form.Select>
