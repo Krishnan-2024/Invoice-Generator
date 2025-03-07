@@ -25,7 +25,7 @@ class EditableField extends React.Component {
           id={this.props.cellData.id}
           value={this.props.cellData.value}
           step={this.props.cellData.step}
-          presicion={this.props.cellData.presicion}
+          precision={this.props.cellData.precision}
           aria-label={this.props.cellData.name}
           onChange={this.props.onItemizedItemEdit}
           required
